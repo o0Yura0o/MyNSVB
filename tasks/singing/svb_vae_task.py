@@ -141,7 +141,7 @@ class SVBVAETask(ParaPPGPretrainedTask):
         else:
             rand_spkemb_idx = np.random.randint(1, sample['multi_spk_emb'].shape[1])  # range from [0, 4]
         spk_ids = sample['multi_spk_emb'][:, rand_spkemb_idx, :]  # [B, H]
-        print(spk_ids)
+        #print(spk_ids)
         output = self.model(amateur_mel=amateur_mels, prof_mel=prof_mels,
                             amateur_pitch=amateur_pitch, prof_pitch=prof_pitch,
                             amateur_spk_id=spk_ids, prof_spk_id=spk_ids,  # both use amateur spk id

@@ -78,7 +78,7 @@ class SVBVAE(nn.Module):
         #     ret['h_tech'] = h_tech
 
         # Spk embedding
-        print(f"Message from PC func.: The spk_embed shape is {spk_ids.shape}, and its contents are {spk_ids}")
+        #print(f"Message from PC func.: The spk_embed shape is {spk_ids.shape}, and its contents are {spk_ids}")
         h_style = self.spk_embed_proj(spk_ids)[:, None, :].repeat(1, T, 1)
         ret['h_style'] = h_style
 
