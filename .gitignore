@@ -6,3 +6,5 @@ data/*
 checkpoints/*
 local_tools/dtw
 .vscode/
+.wav
+.mp3
