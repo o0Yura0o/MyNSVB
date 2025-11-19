@@ -1,0 +1,33 @@
+base_config:
+- egs/egs_bases/vc/vc_ppg.yaml
+- ./base_text2mel.yaml
+binary_data_dir: C:/Users/neo29/workspace/SVC/NSVB/runs/raw_infer_20251119_191558/bin
+task_cls: tasks.singing.svb_vae_task.SVBVAEMleTask
+use_energy: false
+max_tokens: 40000
+max_frames: 5000
+concurrent_ways: ''
+lambda_mle: 1.0
+lambda_kl: 0.001
+phase_1_steps: -1
+phase_2_steps: 100000
+max_updates: 200000
+phase_1_concurrent_ways: p2p
+phase_2_concurrent_ways: a2a,p2p
+phase_3_concurrent_ways: a2p
+cross_way_no_recon_loss: false
+cross_way_no_disc_loss: false
+disable_map: false
+latent_size: 128
+fvae_enc_dec_hidden: 192
+fvae_kernel_size: 5
+fvae_enc_n_layers: 8
+fvae_dec_n_layers: 4
+frames_multiple: 4
+map_lr: 0.001
+map_scheduler_params:
+  gamma: 0.5
+  step_size: 60000
+vocoder: hifigan
+vocoder_ckpt: checkpoints/1012_hifigan_all_songs_nsf
+pretrain_asr_ckpt: checkpoints/1009_pretrain_asr_english
