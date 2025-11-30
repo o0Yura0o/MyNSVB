@@ -145,6 +145,7 @@ def main():
     pack_binarizer.item_names = list(item2wavfn.keys())
     pack_binarizer._test_item_names = pack_binarizer.item_names
     print('[Stage 2] Pack →', bdd)
+    pack_binarizer.load_meta_data()
     pack_binarizer.process_data(prefix='test')
 
     src_phone_set = os.path.abspath("phone_set.json")

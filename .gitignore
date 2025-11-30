@@ -8,3 +8,4 @@ local_tools/dtw
 .vscode/
 .wav
 .mp3
+runs/*
