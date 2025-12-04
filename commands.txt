@@ -1,1 +1,3 @@
-python preprocess.py --src data/Mydata/Alan_A_1.mp3 --tgt data/Mydata/Alan_P_1.mp3 --out_dir processed_output
+python preprocess.py --src data/Mydata/Alan_A_1.mp3 --tgt data/Mydata/Alan_P_1.mp3 --out_dir data/processed_output
+
+python preprocess_align.py --src data/Mydata/Alan_A_1.mp3 --tgt data/Mydata/Alan_P_1.mp3 --out_dir data/processed_output --top_db 30
