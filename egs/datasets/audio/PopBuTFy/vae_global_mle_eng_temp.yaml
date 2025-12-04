@@ -1,7 +1,7 @@
 base_config:
 - egs/egs_bases/vc/vc_ppg.yaml
 - ./base_text2mel.yaml
-binary_data_dir: C:/Users/neo29/workspace/SVC/NSVB/runs/raw_infer_20251130_193231/bin
+binary_data_dir: C:/Users/neo29/workspace/SVC/NSVB/runs/raw_infer_20251202_202610/bin
 task_cls: tasks.singing.svb_vae_task.SVBVAEMleTask
 use_energy: false
 max_tokens: 40000
