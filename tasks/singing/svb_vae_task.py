@@ -309,10 +309,13 @@ class SVBVAETask(ParaPPGPretrainedTask):
         try:
             self.pitch_debugging(
                 mel_pred=model_out['a2p']['mel_out'], 
-                mel_gt=sample['prof_mels'],     
-                f0_gt=sample['prof_f0'],        
+                mel_gt=sample['prof_mels'],     # 中層：專業版 Mel
+                mel_src=sample['mels'],         # [新增] 底層：業餘版 Mel
+                f0_gt=sample['prof_f0'],        # 中層/頂層 F0
                 uv_gt=sample['prof_uv'],
-                name=f'debug_infer_a2p'  # 在 TensorBoard 中顯示的標籤名稱
+                f0_src=sample['f0'],            # [新增] 底層 F0
+                uv_src=sample['uv'],            # [新增] 底層 UV
+                name=f'debug_infer_a2p'
             )
         except Exception as e:
             print(f"Pitch debugging failed: {e}")

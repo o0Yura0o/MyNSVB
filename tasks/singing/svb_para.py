@@ -214,22 +214,64 @@ class SVBParaTask(FastSpeech2AdvTask):
         log_outputs['bs'] = sample['mels'].shape[0]
         return total_loss, log_outputs
 
-    def pitch_debugging(self, mel_pred, mel_gt, f0_gt, uv_gt, name):
-        fig = plt.figure(figsize=(12, 6))
+    def pitch_debugging(self, mel_pred, mel_gt, mel_src, f0_gt, uv_gt, f0_src, uv_src, name):
+        # 使用 subplots 建立 3 行 1 列的圖表，figsize 加大以容納三圖
+        # sharex=False 是關鍵，因為 Amateur 和 Professional 的時間長度不同，不能共用 X 軸
+        fig, axes = plt.subplots(3, 1, figsize=(12, 12), sharex=False)
+        
         spec_vmin = _hp('mel_vmin')
         spec_vmax = _hp('mel_vmax')
 
+        # === 資料準備 ===
+        # 1. 專業版 / 預測版 (長度 A, 例如 804)
         f0_gt = denorm_f0(f0_gt, uv_gt, hparams)
         f0_gt = f0_gt[0].cpu().numpy()
+        f0_gt_plot = f0_gt / 10 * (f0_gt > 0) # F0 座標轉換
 
-        mel = (torch.cat([mel_gt, mel_pred], -1))[0].cpu().numpy()
-        f0_gt = f0_gt / 10 * (f0_gt > 0)
-        f0_another = f0_gt + 80  # to be changed
+        mel_gt_np = mel_gt[0].cpu().numpy()     # [T_prof, 80]
+        mel_pred_np = mel_pred[0].cpu().numpy() # [T_prof, 80]
 
-        plt.pcolor(mel.T, vmin=spec_vmin, vmax=spec_vmax)
-        plt.plot(f0_gt, c='white', linewidth=1, alpha=0.6)
-        plt.plot(f0_another, c='red', linewidth=1, alpha=0.6)
+        # 2. 業餘版 (長度 B, 例如 696)
+        f0_src = denorm_f0(f0_src, uv_src, hparams)
+        f0_src = f0_src[0].cpu().numpy()
+        f0_src_plot = f0_src / 10 * (f0_src > 0)
+        
+        mel_src_np = mel_src[0].cpu().numpy()   # [T_amt, 80]
+
+        # === 繪圖 (由上而下：預測 -> GT -> 輸入) ===
+
+        # [Top] Prediction (Target F0)
+        ax = axes[0]
+        ax.set_title("Prediction (a2p) + Target F0")
+        # 注意：pcolor 需要轉置 (.T) 讓 Y 軸為頻率
+        ax.pcolor(mel_pred_np.T, vmin=spec_vmin, vmax=spec_vmax)
+        ax.plot(f0_gt_plot, c='red', linewidth=1.5, alpha=0.8, label='Target F0')
+        ax.legend(loc='upper right')
+        ax.set_ylabel('Frequency')
+
+        # [Middle] Professional GT (Target F0)
+        ax = axes[1]
+        ax.set_title("Professional GT + Target F0")
+        ax.pcolor(mel_gt_np.T, vmin=spec_vmin, vmax=spec_vmax)
+        ax.plot(f0_gt_plot, c='white', linewidth=1.5, alpha=0.8, label='GT F0')
+        ax.legend(loc='upper right')
+        ax.set_ylabel('Frequency')
+
+        # [Bottom] Amateur Source (Source F0)
+        ax = axes[2]
+        ax.set_title("Amateur Source + Source F0")
+        ax.pcolor(mel_src_np.T, vmin=spec_vmin, vmax=spec_vmax)
+        ax.plot(f0_src_plot, c='yellow', linewidth=1.5, alpha=0.8, label='Source F0')
+        ax.legend(loc='upper right')
+        ax.set_ylabel('Frequency')
+        ax.set_xlabel('Time (Frames)')
+
+        # 自動調整版面間距
+        plt.tight_layout()
+
+        # 存入 TensorBoard
         self.logger.add_figure(name, fig, self.global_step)
+        plt.close(fig)
 
     def validation_step(self, sample, batch_idx):
         prof_mel = sample['prof_mels']
