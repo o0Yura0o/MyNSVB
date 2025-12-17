@@ -25,6 +25,7 @@ sort_by_len: true
 #########
 print_nan_grads: false
 load_ckpt: 'checkpoints/1030_vae_mle/model_ckpt_steps_200000.ckpt'
+#load_ckpt: 'checkpoints/1030_vae_mle/test.pth'
 save_best: true
 num_ckpt_keep: 3
 clip_grad_norm: 0

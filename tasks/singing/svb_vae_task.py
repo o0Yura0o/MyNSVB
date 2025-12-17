@@ -141,6 +141,7 @@ class SVBVAETask(ParaPPGPretrainedTask):
         else:
             rand_spkemb_idx = np.random.randint(1, sample['multi_spk_emb'].shape[1])  # range from [0, 4]
         spk_ids = sample['multi_spk_emb'][:, rand_spkemb_idx, :]  # [B, H]
+        print("The spk_idx: ",rand_spkemb_idx)
         #print(spk_ids)
         output = self.model(amateur_mel=amateur_mels, prof_mel=prof_mels,
                             amateur_pitch=amateur_pitch, prof_pitch=prof_pitch,
@@ -304,6 +305,17 @@ class SVBVAETask(ParaPPGPretrainedTask):
         concurrent_ways = ['a2a', 'p2p', 'a2p']
         _, model_out = self.run_model(self.model, sample, concurrent_ways=concurrent_ways, return_output=True,
                                       infer=True, disable_map=hparams['disable_map'])
+        
+        try:
+            self.pitch_debugging(
+                mel_pred=model_out['a2p']['mel_out'], 
+                mel_gt=sample['prof_mels'],     
+                f0_gt=sample['prof_f0'],        
+                uv_gt=sample['prof_uv'],
+                name=f'debug_infer_a2p'  # 在 TensorBoard 中顯示的標籤名稱
+            )
+        except Exception as e:
+            print(f"Pitch debugging failed: {e}")
 
         prof_f0s = denorm_f0(sample['prof_f0'], sample['prof_uv'], hparams)
         amateur_f0s = denorm_f0(sample['f0'], sample['uv'], hparams)

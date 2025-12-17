@@ -346,7 +346,7 @@ class SVBParaTask(FastSpeech2AdvTask):
     @staticmethod
     def save_result(wavs_dict, base_fn, gen_dir, str_phs=None, mels_dict=None):
         for key in wavs_dict:
-            if hparams.get('disable_map') is not None and _hp('disable_map'):
+            if _hp('disable_map'):
                 audio.save_wav(wavs_dict[key], f'{gen_dir}/wavs/disable_map_{key}/{base_fn}.wav',
                                _hp('audio_sample_rate'),
                                norm=_hp('out_wav_norm'))
@@ -355,7 +355,7 @@ class SVBParaTask(FastSpeech2AdvTask):
                                norm=_hp('out_wav_norm'))
         if mels_dict is not None:
             for key in mels_dict:
-                if hparams.get('disable_map') is not None and _hp('disable_map'):
+                if _hp('disable_map'):
                     np.save(f'{gen_dir}/mels/disable_map_{key}/{base_fn}.npy', mels_dict[key])
                 else:
                     np.save(f'{gen_dir}/mels/{key}/{base_fn}.npy', mels_dict[key])
